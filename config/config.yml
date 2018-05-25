@@ -1,0 +1,2 @@
+router:
+    - { resource: "config/router.yml" }

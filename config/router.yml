@@ -1,0 +1,4 @@
+finance:
+    resource: "src/Controller"
+    type:     annotation
+    prefix: "home"
