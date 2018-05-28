@@ -9,12 +9,13 @@
         "symfony/yaml": "^4.0",
         "symfony/console": "^4.0",
         "symfony/finder": "^4.0",
-        "doctrine/common": "*"
+        "doctrine/common": "*",
+        "twig/twig": "~1.0"
     },
     "autoload": {
         "psr-4": {
             "": "src/"
         },
-        "classmap": [ "config/App.php", "config/Router.php" ]
+        "classmap": [ "config/App.php", "config/Router.php", "config/ControllerLoad.php" ]
     }
 }

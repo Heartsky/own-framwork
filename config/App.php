@@ -16,12 +16,13 @@ const SUCCESS_STATUS = 200;
 
 class App {
     private $env;
+    private $router;
     public function __construct($env = 'dev', $debug = false){
          $this->env = $env;
          $config = Yaml::parseFile(__DIR__.'/config.yml');
          if(isset($config['router']))
          {
-             $this->loadRouter($config['router']);
+             $this->router = $this->loadRouter($config['router']);
          }
 
     }
@@ -33,68 +34,20 @@ class App {
     }
 
     public function execute($request){
-
+        $currentRoute = $this->router->mappingRouter($request);
+        if(empty($currentRoute)) {
+            return new Response('Not Found', 404);
+        }
+        return ControllerLoad::loadResponse($currentRoute, $request);
     }
 
 
     private function loadRouter($routers){
         if($this->env == 'dev'){
-            foreach ($routers as $router){
-                $resources =  Yaml::parseFile(__DIR__.'/../'.$router['resource']);
-                foreach ($resources as $item){
-                    $resource = $item['resource'];
-                    $type = $item['type'];
-                    $pre = $item['prefix'];
-                    if($type == 'annotation'){
-                        $this->readAnnotationRoute($resource, $pre);
-                    }
-
-                }
-
-
-            }
-
+            return Router::getInstance($routers);
         }
     }
 
-    private function readAnnotationRoute($resource, $prefix) {
-        $finder = new Finder();
-        $finder->files()->in(__DIR__.'/../'.$resource);
-
-        require_once __DIR__ . '/../src/Service/Route.php';
-        $reader = new AnnotationReader();
-        foreach ($finder as $file) {
-
-            $fileName = pathinfo($file->getRelativePathname(), PATHINFO_FILENAME);
-            $reflectionClass = new ReflectionClass("Controller\\".$fileName);
-            $methods = $reflectionClass->getMethods();
-            $controller = $fileName;
-            var_dump($controller);
-            foreach ($methods as $method){
-                var_dump($method->getName());
-                $annotation  =  $reader->getMethodAnnotations($method);
-                foreach ($annotation as $ann)
-                {
-
-                    var_dump( $ann->getName());
-                }
-
-            }
-
-
-
-
-//                    $property = $reflectionClass->getProperty('bar');
-//                    $data = $reader->getMethodAnnotations($property);
-//                    echo  "<pre>";
-//                    var_dump($data);
-
-
-
-        }
-
-        exit;
-    }
 
     private function validateController($controller) {
         $baseControllerDir = __DIR__ . '/../src/Controller/';

@@ -12,7 +12,7 @@ class HomeController extends BaseController
      */
     public function indexAction(Request $request) {
 
-
+        return $this->render("home/index.php",['test' => 'aaaaaaaaaa']);
     }
     /**
      * @Route(path="/bye", name="home_exit")
