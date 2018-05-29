@@ -17,15 +17,23 @@ const SUCCESS_STATUS = 200;
 class App {
     private $env;
     private $router;
-    public function __construct($env = 'dev', $debug = false){
-         $this->env = $env;
-         $config = Yaml::parseFile(__DIR__.'/config.yml');
-         if(isset($config['router']))
-         {
+    public function __construct($env = 'dev'){
+          $this->env = $env;
+          $config = Yaml::parseFile(__DIR__.'/config.yml');
+
+          if(isset($config['router']))
+          {
              $this->router = $this->loadRouter($config['router']);
-         }
+          }
+
+
+         DB::getInstance( $env == 'dev');
+
+
 
     }
+
+
     public function loadController($param){
         if(isset($param['view'])){
             include $param['view'];
@@ -48,6 +56,12 @@ class App {
         }
     }
 
+    public function  loadDoctrine($config){
+        if($this->env == 'dev') {
+            $isDevMode = true;
+            $config = Setup::createAnnotationMetadataConfiguration(array(__DIR__ . "/src"), $isDevMode);
+        }
+    }
 
     private function validateController($controller) {
         $baseControllerDir = __DIR__ . '/../src/Controller/';
@@ -61,4 +75,5 @@ class App {
             return ['status' => NOTFOUND_STATUS,'message' => 'can not find out controller with named '.$controller.'Controller.php'];
         }
     }
+
 }

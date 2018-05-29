@@ -1,2 +1,8 @@
 router:
     - { resource: "config/router.yml" }
+
+database:
+  host: localhost
+  user: root
+  password:
+  database: demo

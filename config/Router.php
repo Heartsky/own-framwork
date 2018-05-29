@@ -25,6 +25,7 @@ class Router {
     public static function getInstance($routers){
         if(empty( self::$router) && self::$isLoad == false){
             self::$router = new Router($routers);
+            self::$isLoad = true;
         }
         return self::$router;
     }
